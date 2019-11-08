@@ -3,4 +3,6 @@
     <string name="no_internet">Internet connection unavailable</string>
     <string name="please_check_internet">Please check your internet connection</string>
     <string name="ok">Okay</string>
+    <string name="readings_title">Readings of %s</string>
+    <string name="readings_info">o3_sub_index: %s\npm10_twenty_four_hourly: %s\npm10_sub_index: %s\nco_sub_index: %s\npm25_twenty_four_hourly: %s\nso2_sub_index: %s\nco_eight_hour_max: %s\nno2_one_hour_max: %s\nso2_twenty_four_hourly: %s\npm25_sub_index: %s\npsi_twenty_four_hourly: %s\no3_eight_hour_max: %s\n</string>
 </resources>
