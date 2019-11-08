@@ -5,4 +5,9 @@ package com.trdevendran.assignmentpsi.util
  */
 class Constants {
 
+    interface APIKeys {
+        companion object {
+            val NATIONAL = "national"
+        }
+    }
 }
