@@ -20,6 +20,7 @@ import com.trdevendran.assignmentpsi.util.CommonSnippets
 import com.trdevendran.assignmentpsi.util.Constants
 import com.trdevendran.assignmentpsi.viewmodel.PSIInfoViewModel
 import kotlinx.android.synthetic.main.activity_maps.*
+import org.jetbrains.annotations.TestOnly
 
 /**
  * This class behaves the main page of the application
@@ -59,13 +60,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
             val name = mMarkerMap[marker.id]!!.name
 
-            CommonSnippets.createAlertDialogWithView(
-                this@MainActivity,
-                String.format(getString(R.string.readings_title), name),
-                getReadingInfo(name),
-                getString(R.string.ok),
-                DialogInterface.OnClickListener { p0, _ -> p0!!.dismiss() }, null
-            ).show()
+            mViewModel.getNewsRepository()!!.value?.let {
+                getReadingInfo(
+                    name,
+                    it,
+                    getString(R.string.readings_info)
+                )
+            }?.let {
+                CommonSnippets.createAlertDialogWithView(
+                    this@MainActivity,
+                    String.format(getString(R.string.readings_title), name),
+                    it,
+                    getString(R.string.ok),
+                    DialogInterface.OnClickListener { p0, _ -> p0!!.dismiss() }, null
+                ).show()
+            }
 
             // Returns as false to utilise the tool tip
             false
@@ -138,126 +147,141 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             })
     }
 
-    private fun getReadingInfo(name: String): String {
+    /**
+     * @param name the name of the region
+     *
+     * @param info the information about PSI to fetch the readings
+     *
+     * @param baseContent the static string content to populate the reading information on view
+     *
+     * @return a string which will summarise all the readings of the region based on the matches of [name]
+     */
+    fun getReadingInfo(name: String, info: PSIInfoResponse, baseContent: String): String {
 
-        val info = mViewModel.getNewsRepository()!!
-
-        var o3SubIndex = ""
-        var pm10TwentyFourHourly = ""
-        var pm10SubIndex = ""
-        var coSubIndex = ""
-        var pm25TwentyFourHourly = ""
-        var so2SubIndex = ""
-        var coEightHourMax = ""
-        var no2OneHourMax = ""
-        var so2TwentyFourHourly = ""
-        var pm25SubIndex = ""
-        var psiTwentyFourHourly = ""
-        var o3EightHourMax = ""
-        info.value!!.items.forEach {
-            when (name) {
-                "east" -> {
-                    o3SubIndex = it.readings.o3SubIndex.east.toString()
-                    pm10TwentyFourHourly = it.readings.pm10TwentyFourHourly.east.toString()
-                    pm10SubIndex = it.readings.pm10SubIndex.east.toString()
-                    coSubIndex = it.readings.coSubIndex.east.toString()
-                    pm25TwentyFourHourly = it.readings.pm25TwentyFourHourly.east.toString()
-                    so2SubIndex = it.readings.so2SubIndex.east.toString()
-                    coEightHourMax = it.readings.coEightHourMax.east.toString()
-                    no2OneHourMax = it.readings.no2OneHourMax.east.toString()
-                    so2TwentyFourHourly = it.readings.so2TwentyFourHourly.east.toString()
-                    pm25SubIndex = it.readings.pm25SubIndex.east.toString()
-                    psiTwentyFourHourly = it.readings.psiTwentyFourHourly.east.toString()
-                    o3EightHourMax = it.readings.o3EightHourMax.east.toString()
-                }
-            "west" -> {
-                o3SubIndex = it.readings.o3SubIndex.west.toString()
-                pm10TwentyFourHourly = it.readings.pm10TwentyFourHourly.west.toString()
-                pm10SubIndex = it.readings.pm10SubIndex.west.toString()
-                coSubIndex = it.readings.coSubIndex.west.toString()
-                pm25TwentyFourHourly = it.readings.pm25TwentyFourHourly.west.toString()
-                so2SubIndex = it.readings.so2SubIndex.west.toString()
-                coEightHourMax = it.readings.coEightHourMax.west.toString()
-                no2OneHourMax = it.readings.no2OneHourMax.west.toString()
-                so2TwentyFourHourly = it.readings.so2TwentyFourHourly.west.toString()
-                pm25SubIndex = it.readings.pm25SubIndex.west.toString()
-                psiTwentyFourHourly = it.readings.psiTwentyFourHourly.west.toString()
-                o3EightHourMax = it.readings.o3EightHourMax.west.toString()
-            }
-                "north" -> {
-                    o3SubIndex = it.readings.o3SubIndex.north.toString()
-                    pm10TwentyFourHourly = it.readings.pm10TwentyFourHourly.north.toString()
-                    pm10SubIndex = it.readings.pm10SubIndex.north.toString()
-                    coSubIndex = it.readings.coSubIndex.north.toString()
-                    pm25TwentyFourHourly = it.readings.pm25TwentyFourHourly.north.toString()
-                    so2SubIndex = it.readings.so2SubIndex.north.toString()
-                    coEightHourMax = it.readings.coEightHourMax.north.toString()
-                    no2OneHourMax = it.readings.no2OneHourMax.north.toString()
-                    so2TwentyFourHourly = it.readings.so2TwentyFourHourly.north.toString()
-                    pm25SubIndex = it.readings.pm25SubIndex.north.toString()
-                    psiTwentyFourHourly = it.readings.psiTwentyFourHourly.north.toString()
-                    o3EightHourMax = it.readings.o3EightHourMax.north.toString()
-                }
-                "south" -> {
-                    o3SubIndex = it.readings.o3SubIndex.south.toString()
-                    pm10TwentyFourHourly = it.readings.pm10TwentyFourHourly.south.toString()
-                    pm10SubIndex = it.readings.pm10SubIndex.south.toString()
-                    coSubIndex = it.readings.coSubIndex.south.toString()
-                    pm25TwentyFourHourly = it.readings.pm25TwentyFourHourly.south.toString()
-                    so2SubIndex = it.readings.so2SubIndex.south.toString()
-                    coEightHourMax = it.readings.coEightHourMax.south.toString()
-                    no2OneHourMax = it.readings.no2OneHourMax.south.toString()
-                    so2TwentyFourHourly = it.readings.so2TwentyFourHourly.south.toString()
-                    pm25SubIndex = it.readings.pm25SubIndex.south.toString()
-                    psiTwentyFourHourly = it.readings.psiTwentyFourHourly.south.toString()
-                    o3EightHourMax = it.readings.o3EightHourMax.south.toString()
-                }
-                "central" -> {
-                    o3SubIndex = it.readings.o3SubIndex.central.toString()
-                    pm10TwentyFourHourly = it.readings.pm10TwentyFourHourly.central.toString()
-                    pm10SubIndex = it.readings.pm10SubIndex.central.toString()
-                    coSubIndex = it.readings.coSubIndex.central.toString()
-                    pm25TwentyFourHourly = it.readings.pm25TwentyFourHourly.central.toString()
-                    so2SubIndex = it.readings.so2SubIndex.central.toString()
-                    coEightHourMax = it.readings.coEightHourMax.central.toString()
-                    no2OneHourMax = it.readings.no2OneHourMax.central.toString()
-                    so2TwentyFourHourly = it.readings.so2TwentyFourHourly.central.toString()
-                    pm25SubIndex = it.readings.pm25SubIndex.central.toString()
-                    psiTwentyFourHourly = it.readings.psiTwentyFourHourly.central.toString()
-                    o3EightHourMax = it.readings.o3EightHourMax.central.toString()
-                }
-                "national" -> {
-                    o3SubIndex = it.readings.o3SubIndex.national.toString()
-                    pm10TwentyFourHourly = it.readings.pm10TwentyFourHourly.national.toString()
-                    pm10SubIndex = it.readings.pm10SubIndex.national.toString()
-                    coSubIndex = it.readings.coSubIndex.national.toString()
-                    pm25TwentyFourHourly = it.readings.pm25TwentyFourHourly.national.toString()
-                    so2SubIndex = it.readings.so2SubIndex.national.toString()
-                    coEightHourMax = it.readings.coEightHourMax.national.toString()
-                    no2OneHourMax = it.readings.no2OneHourMax.national.toString()
-                    so2TwentyFourHourly = it.readings.so2TwentyFourHourly.national.toString()
-                    pm25SubIndex = it.readings.pm25SubIndex.national.toString()
-                    psiTwentyFourHourly = it.readings.psiTwentyFourHourly.national.toString()
-                    o3EightHourMax = it.readings.o3EightHourMax.national.toString()
+        if (name == Constants.APIKeys.EAST
+            || name == Constants.APIKeys.WEST
+            || name == Constants.APIKeys.NORTH
+            || name == Constants.APIKeys.SOUTH
+            || name == Constants.APIKeys.CENTRAL
+            || name == Constants.APIKeys.NATIONAL
+        ) {
+            info.items.forEach {
+                when (name) {
+                    Constants.APIKeys.EAST -> {
+                        return String.format(
+                            baseContent,
+                            it.readings.o3SubIndex.east.toString(),
+                            it.readings.pm10TwentyFourHourly.east.toString(),
+                            it.readings.pm10SubIndex.east.toString(),
+                            it.readings.coSubIndex.east.toString(),
+                            it.readings.pm25TwentyFourHourly.east.toString(),
+                            it.readings.so2SubIndex.east.toString(),
+                            it.readings.coEightHourMax.east.toString(),
+                            it.readings.no2OneHourMax.east.toString(),
+                            it.readings.so2TwentyFourHourly.east.toString(),
+                            it.readings.pm25SubIndex.east.toString(),
+                            it.readings.psiTwentyFourHourly.east.toString(),
+                            it.readings.o3EightHourMax.east.toString()
+                        )
+                    }
+                    Constants.APIKeys.WEST -> {
+                        return String.format(
+                            baseContent,
+                            it.readings.o3SubIndex.west.toString(),
+                            it.readings.pm10TwentyFourHourly.west.toString(),
+                            it.readings.pm10SubIndex.west.toString(),
+                            it.readings.coSubIndex.west.toString(),
+                            it.readings.pm25TwentyFourHourly.west.toString(),
+                            it.readings.so2SubIndex.west.toString(),
+                            it.readings.coEightHourMax.west.toString(),
+                            it.readings.no2OneHourMax.west.toString(),
+                            it.readings.so2TwentyFourHourly.west.toString(),
+                            it.readings.pm25SubIndex.west.toString(),
+                            it.readings.psiTwentyFourHourly.west.toString(),
+                            it.readings.o3EightHourMax.west.toString()
+                        )
+                    }
+                    Constants.APIKeys.NORTH -> {
+                        return String.format(
+                            baseContent,
+                            it.readings.o3SubIndex.north.toString(),
+                            it.readings.pm10TwentyFourHourly.north.toString(),
+                            it.readings.pm10SubIndex.north.toString(),
+                            it.readings.coSubIndex.north.toString(),
+                            it.readings.pm25TwentyFourHourly.north.toString(),
+                            it.readings.so2SubIndex.north.toString(),
+                            it.readings.coEightHourMax.north.toString(),
+                            it.readings.no2OneHourMax.north.toString(),
+                            it.readings.so2TwentyFourHourly.north.toString(),
+                            it.readings.pm25SubIndex.north.toString(),
+                            it.readings.psiTwentyFourHourly.north.toString(),
+                            it.readings.o3EightHourMax.north.toString()
+                        )
+                    }
+                    Constants.APIKeys.SOUTH -> {
+                        return String.format(
+                            baseContent,
+                            it.readings.o3SubIndex.south.toString(),
+                            it.readings.pm10TwentyFourHourly.south.toString(),
+                            it.readings.pm10SubIndex.south.toString(),
+                            it.readings.coSubIndex.south.toString(),
+                            it.readings.pm25TwentyFourHourly.south.toString(),
+                            it.readings.so2SubIndex.south.toString(),
+                            it.readings.coEightHourMax.south.toString(),
+                            it.readings.no2OneHourMax.south.toString(),
+                            it.readings.so2TwentyFourHourly.south.toString(),
+                            it.readings.pm25SubIndex.south.toString(),
+                            it.readings.psiTwentyFourHourly.south.toString(),
+                            it.readings.o3EightHourMax.south.toString()
+                        )
+                    }
+                    Constants.APIKeys.CENTRAL -> {
+                        return String.format(
+                            baseContent,
+                            it.readings.o3SubIndex.central.toString(),
+                            it.readings.pm10TwentyFourHourly.central.toString(),
+                            it.readings.pm10SubIndex.central.toString(),
+                            it.readings.coSubIndex.central.toString(),
+                            it.readings.pm25TwentyFourHourly.central.toString(),
+                            it.readings.so2SubIndex.central.toString(),
+                            it.readings.coEightHourMax.central.toString(),
+                            it.readings.no2OneHourMax.central.toString(),
+                            it.readings.so2TwentyFourHourly.central.toString(),
+                            it.readings.pm25SubIndex.central.toString(),
+                            it.readings.psiTwentyFourHourly.central.toString(),
+                            it.readings.o3EightHourMax.central.toString()
+                        )
+                    }
+                    Constants.APIKeys.NATIONAL -> {
+                        return String.format(
+                            baseContent,
+                            it.readings.o3SubIndex.national.toString(),
+                            it.readings.pm10TwentyFourHourly.national.toString(),
+                            it.readings.pm10SubIndex.national.toString(),
+                            it.readings.coSubIndex.national.toString(),
+                            it.readings.pm25TwentyFourHourly.national.toString(),
+                            it.readings.so2SubIndex.national.toString(),
+                            it.readings.coEightHourMax.national.toString(),
+                            it.readings.no2OneHourMax.national.toString(),
+                            it.readings.so2TwentyFourHourly.national.toString(),
+                            it.readings.pm25SubIndex.national.toString(),
+                            it.readings.psiTwentyFourHourly.national.toString(),
+                            it.readings.o3EightHourMax.national.toString()
+                        )
+                    }
                 }
             }
         }
-        return String.format(
-            getString(
-                R.string.readings_info,
-                o3SubIndex,
-                pm10TwentyFourHourly,
-                pm10SubIndex,
-                coSubIndex,
-                pm25TwentyFourHourly,
-                so2SubIndex,
-                coEightHourMax,
-                no2OneHourMax,
-                so2TwentyFourHourly,
-                pm25SubIndex,
-                psiTwentyFourHourly,
-                o3EightHourMax
-            )
-        )
+        return ""
+    }
+
+    /**
+     * This function only executes when runs test
+     *
+     * @param viewModel to set object of mocked view model via test class
+     */
+    @TestOnly
+    fun setTestViewModel(viewModel: PSIInfoViewModel) {
+        mViewModel = viewModel
     }
 }
