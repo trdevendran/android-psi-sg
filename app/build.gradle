@@ -16,7 +16,7 @@ android {
         testFunctionalTest true
     }
     buildTypes {
-        debug{
+        debug {
             buildConfigField 'String', 'BASE_URL', '"https://api.data.gov.sg/v1/"'
         }
         release {
@@ -24,6 +24,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    testOptions {
+        unitTests.includeAndroidResources = true
+        unitTests.returnDefaultValues = true
     }
 }
 
@@ -43,8 +47,13 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
 
-    //unit test
+    // unit test
     testImplementation 'junit:junit:4.12'
+    //unit test with live data
+    testImplementation 'android.arch.core:core-testing:1.1.1'
+    // required if you want to use Mockito for Android tests
+    testImplementation 'org.mockito:mockito-android:2.7.22'
+    testImplementation "org.robolectric:robolectric:3.5.1"
 
     //network
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'

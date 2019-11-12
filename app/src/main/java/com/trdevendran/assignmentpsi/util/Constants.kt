@@ -7,7 +7,12 @@ class Constants {
 
     interface APIKeys {
         companion object {
-            val NATIONAL = "national"
+            const val EAST = "east"
+            const val WEST = "west"
+            const val NORTH = "north"
+            const val SOUTH = "south"
+            const val CENTRAL = "central"
+            const val NATIONAL = "national"
         }
     }
 }
